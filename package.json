@@ -1,0 +1,24 @@
+{
+  "name": "healthy-food-backend",
+  "version": "1.0.0",
+  "description": "졸업작품 리팩토링 프로젝트입니다.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rudduddl/healthy-food-backend.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/rudduddl/healthy-food-backend/issues"
+  },
+  "homepage": "https://github.com/rudduddl/healthy-food-backend#readme",
+  "dependencies": {
+    "express": "^5.1.0",
+    "module": "^2.0.0"
+  }
+}
