@@ -1,5 +1,5 @@
 import { compareSync, hashSync } from "bcrypt";
-import {findUserById, createUser} from "../repositories/userRepository.js";
+import { findUserById, createUser } from "../repositories/userRepository.js";
 
 export async function login(id, password) {
     const user = await findUserById(id);

@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { favoriteReciepe } from "../config/mongodb";
+import { favoriteRecipe } from "../config/mongoDB.js";
 
 const router = Router();
 
@@ -30,7 +30,7 @@ router.post("/favorite", async (req, res) => {
     res.send({ result: "로그인 후 이용해주세요" });
     return;
   }
-  const result = await favoriteReciepe(req.session.user.id, receipeName);
+  const result = await favoriteRecipe(req.session.user.id, receipeName);
   if (result === true) {
     res.send({ result: "success" });
   } else {

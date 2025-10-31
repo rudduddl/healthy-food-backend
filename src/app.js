@@ -6,7 +6,7 @@ import session from 'express-session';
 import cors from 'cors';
 
 import memberRoutes from './routes/member.js';
-import receipeRoutes from './routes/receipe.js';
+import recipeRoutes from './routes/recipe.js';
 import diseaseRoutes from './routes/disease.js';
 
 const app = express();
@@ -29,7 +29,7 @@ app.use(
 
 // 라우터 등록
 app.use("/api/member", memberRoutes);
-app.use("/api/receipe", receipeRoutes);
+app.use("/api/recipe", recipeRoutes);
 app.use("/api/disease", diseaseRoutes);
 
 export default app;

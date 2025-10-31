@@ -1,4 +1,4 @@
-import { getDB } from "../config/mongoDB";
+import { getDB } from "../config/mongoDB.js";
 
 export async function findUserById(id){
     const db = getDB();

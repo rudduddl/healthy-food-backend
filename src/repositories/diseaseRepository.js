@@ -1,4 +1,4 @@
-import { getDB } from "../config/mongoDB";
+import { getDB } from "../config/mongoDB.js";
 
 export async function findById(id){
     const db = getDB();
@@ -12,7 +12,7 @@ export async function findByDiseaseNameContaining(keyword) {
         const condition = keyword ? { name : { $regex : keyword, $options : "i" } } : {};
 
         const diseases = await db
-            .collection
+            .collection("disease")
             .find(condition)
             .sort({ name : 1})
             .toArray();
@@ -25,5 +25,4 @@ export async function findByDiseaseNameContaining(keyword) {
         return [];
     }
     
-
 }

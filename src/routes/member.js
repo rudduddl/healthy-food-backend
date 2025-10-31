@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { login, signup } from "../config/mongodb";
+import { login, signup } from "../repositories/userRepository.js";
 
 const router = Router();
 
