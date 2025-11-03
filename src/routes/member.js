@@ -3,7 +3,7 @@ import { login, signup } from "../repositories/userRepository.js";
 
 const router = Router();
 
-router.post("/login", async (req, res) => {
+router.post("/api/members/login", async (req, res) => {
   const id = req.body.id;
   const password = req.body.password;
   
@@ -22,10 +22,10 @@ router.post("/login", async (req, res) => {
       return;
     }
   }
-  res.redirect("/disease");
+  res.redirect("/api/diseases");
 });
 
-router.post("/logout", (req, res) => {
+router.post("/api/members/logout", (req, res) => {
   if (req.session.user) {
     req.session.destroy(function (err) {
       if (err) {
@@ -36,14 +36,14 @@ router.post("/logout", (req, res) => {
     });
   }
 
-  res.redirect("/");
+  res.redirect("/api");
 });
 
-router.get("/signup", (req, res) => {
+router.get("/api/members/signup", (req, res) => {
   res.render("signup");
 });
 
-router.post("/signup", async (req, res) => {
+router.post("/api/members/signup", async (req, res) => {
   const signupObj = req.body;
   delete signupObj.pswd2;
 

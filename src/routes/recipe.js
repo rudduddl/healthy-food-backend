@@ -23,7 +23,7 @@ const router = Router();
 //   });
 // });
 
-router.post("/favorite", async (req, res) => {
+router.post("/api/recipes/favorite", async (req, res) => {
   const receipeName = req.body.name;
 
   if (req.session.user === undefined) {
