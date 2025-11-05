@@ -37,65 +37,38 @@ export async function findByRecipeNameContaining(keyword){
 
 }
 
-// 주의 식품이 포함된 레시피 제외 검색
-export async function findByCautionRecipeContaining(caution, keyword, start){
+/**
+ * 특정 질환의 주의 레시피 목록 조회
+ * (주의 성분이 포함된 레시피를 가져옴)
+ */
+export async function findCautionRecipesByDiseaseId(diseaseId) {
     try {
         const db = getDB();
 
-        const regExp = (str) => {
-            const reg = /[\{\}\[\]\/?.;:|\)*~`!^\-_+<>@\#$%&\\\=\(\'\"]/gi;
-            
-            return reg.test(str) ? str.replaceAll(reg, "") : str;
-        };
+        // 질환별 주의 식품 목록을 disease 컬렉션에서 조회
+        const disease = await db.collection("disease").findOne({ _id: diseaseId });
 
-        caution = regExp(caution);
-        let split = caution.replace(" ", "").split(",");
-
-        // "류"가 포함된 식품 분류만 필터링
-        const filtered = split.filter((element) => element.includes("류"));
-
-        for (const element of filtered) {
-            const result = await db
-                .collection("foodClass")
-                .findOne({ class : element });
-
-            if (result) {
-                const reg = result.value.map((v) => regExp(v));
-                split = split.concat(reg);
-            }
+        if (!disease || !disease.caution) {
+            return [];
         }
 
-        const option = split.map((s) => ({ RCP_PARTS_DTLS : { $not : { $regex : s } } }));
+        const cautionFoods = disease.caution.split(",").map(food => food.trim());
 
-        const query = { $and : option };
-        if (keyword) query.$text = { $search : keyword };
-
-        const recipe = await db
+        // 주의 식품이 포함된 레시피 찾기
+        const recipes = await db
             .collection("recipe")
-            .find(query, { projection : { RCP_NM : 1, ATT_FILE_NO_MK : 1 } })
-            .skip(start)
-            .limit(20)
+            .find({
+                RCP_PARTS_DTLS: {
+                    $in: cautionFoods.map(food => new RegExp(food, "i")),
+                },
+            })
+            .project({ RCP_NM: 1, ATT_FILE_NO_MK: 1 })
             .toArray();
 
-        // 전체 개수 구하기
-        const cursor = db.collection("recipe").aggregate([
-            { $match : query },
-            { $count : "total" },
-        ]);
-
-        // 다음 페이지가 있는지, 마지막인지 판단하기 위함
-        let recipeTotalCount = 0;
-        try {
-            const result = await cursor.toArray();
-            recipeTotalCount = result.length > 0 ? result[0].total : 0;
-        } catch (err) {
-            console.warn("[recipeRepository] count aggregation error : ", err);
-        }
-
-        return { recipe, totalCount : recipeTotalCount };
+        return recipes;
     } catch (err) {
-        console.error("[recipeRepository] findByCautionRecipeContaining error : ", err);
-        return { recipe : [], totalCount : 0 };
+        console.error("[recipeRepository] findCautionRecipesByDiseaseId error:", err);
+        return [];
     }
 }
 

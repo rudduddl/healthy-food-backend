@@ -18,7 +18,14 @@
   },
   "homepage": "https://github.com/rudduddl/healthy-food-backend#readme",
   "dependencies": {
+    "bcrypt": "^6.0.0",
+    "cookie-parser": "^1.4.7",
+    "cors": "^2.8.5",
+    "dotenv": "^17.2.3",
     "express": "^5.1.0",
-    "module": "^2.0.0"
+    "express-session": "^1.18.2",
+    "module": "^2.0.0",
+    "mongodb": "^6.20.0",
+    "request": "^2.88.2"
   }
 }

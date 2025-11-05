@@ -1,12 +1,12 @@
-import { listen } from "./app";
-import { connect } from "./config/mongodb";
+import app from "./src/app.js";
+import { connect } from "./src/config/mongoDB.js";
 
 const PORT = process.env.PORT || 3000;
 
 const startServer = async() => {
     try{
-        await connect();
-        listen(PORT, () => console.log(`Server running on port ${PORT}`));
+        await connect(); // MongoDB 연결
+        app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
     } catch (err) {
         console.error("Failed to connect to MongoDB : ", err);
     }

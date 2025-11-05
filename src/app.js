@@ -28,8 +28,8 @@ app.use(
 );
 
 // 라우터 등록
-app.use("/api/member", memberRoutes);
-app.use("/api/recipe", recipeRoutes);
-app.use("/api/disease", diseaseRoutes);
+app.use("/api/members", memberRoutes);
+app.use("/api/recipes", recipeRoutes);
+app.use("/api/diseases", diseaseRoutes);
 
 export default app;

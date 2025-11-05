@@ -1,4 +1,6 @@
-import { findById, findByCautionRecipeContaining, findByRecipeNameContaining, findFavoriteReceipeByUser, saveFavoriteRecipe} from "../repositories/recipeRepository.js";
+import { findById, findByRecipeNameContaining, findFavoriteReceipeByUser, saveFavoriteRecipe} from "../repositories/recipeRepository.js";
+import {findCautionRecipesByDiseaseId} from "../repositories/diseaseRepository";
+import {getCautionRecipesByDiseaseId} from "./diseaseService";
 
 export async function getRecipe(id){
     const recipe = await findById(id);
@@ -12,14 +14,13 @@ export async function searchRecipe(keyword){
     return recipes.length ? recipes : null;
 }
 
-export async function getCautionRecipe(caution, keyword, start) {
-    const { recipe, totalCount } = await findByCautionRecipeContaining(caution, keyword, start);
-
-    return recipe.length ? { recipe, totalCount } : null;
+export async function getCautionRecipesByDisease(diseaseId) {
+    const recipes = await findCautionRecipesByDiseaseId(diseaseId);
+    return recipes;
 }
 
-export async function putFavoriteRecipe(user, receipeName) {
-    await saveFavoriteRecipe(user, receipeName);
+export async function putFavoriteRecipe(user, recipeName) {
+    await saveFavoriteRecipe(user, recipeName);
 }
 
 export async function getFavoriteRecipe(userId){

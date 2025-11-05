@@ -1,4 +1,7 @@
 import request from "request";
+import dotenv from "dotenv";
+
+dotenv.config();
 
 const authKey = process.env.AUTH_KEY;
 const serviceId = process.env.SERVICE_ID;
@@ -12,7 +15,7 @@ const endIdx = 10;
  * @param {function} callback 결과를 전달받을 콜백 함수
  */
 export function searchRecipeFromAPI(name, callback) {
-  const uri = `http://openapi.foodsafetykorea.go.kr/api/${authKey}/${serviceId}/${dataType}/${startIdx}/${endIdx}/RCP_NM=${encodeURI(
+  const uri = `http://openapi.foodsafetykorea.go.kr/api/${authKey}/${serviceId}/${dataType}/${startIdx}/${endIdx}?RCP_NM=${encodeURI(
     name
   )}`;
 

@@ -1,6 +1,5 @@
 import { Router } from "express";
-import { favoriteRecipe } from "../config/mongoDB.js";
-
+import { getRecipe, getCautionFoods, searchRecipe, putFavoriteRecipe, getFavoriteRecipe } from "../services/recipeService.js"
 const router = Router();
 
 // router.get("/", (req, res) => {
@@ -23,18 +22,16 @@ const router = Router();
 //   });
 // });
 
-router.post("/api/recipes/favorite", async (req, res) => {
-  const receipeName = req.body.name;
 
-  if (req.session.user === undefined) {
-    res.send({ result: "로그인 후 이용해주세요" });
-    return;
-  }
-  const result = await favoriteRecipe(req.session.user.id, receipeName);
+
+// 즐겨찾기 레시피 들고오기
+router.get("/api/recipes/favorite", async (req, res) => {
+  const result = await getFavoriteRecipe(req.session.user.id);
   if (result === true) {
-    res.send({ result: "success" });
+    res.send({ result: "success"});
+
   } else {
-    res.send({ result: "즐겨찾기 추가 실패" });
+    res.send({result: "즐겨찾기 레시피 가져오기 실패"});
   }
 });
 export default router;
