@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { getRecipe, getCautionFoods, searchRecipe, putFavoriteRecipe, getFavoriteRecipe } from "../services/recipeService.js"
+import { getFavoriteRecipe } from "../services/recipeService.js"
 const router = Router();
 
 // router.get("/", (req, res) => {

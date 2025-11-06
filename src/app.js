@@ -5,7 +5,7 @@ import cookieParser from 'cookie-parser';
 import session from 'express-session';
 import cors from 'cors';
 
-import memberRoutes from './routes/member.js';
+import userRoutes from './routes/user.js';
 import recipeRoutes from './routes/recipe.js';
 import diseaseRoutes from './routes/disease.js';
 
@@ -24,11 +24,12 @@ app.use(
     secret: process.env.SESSION_SECRET || "HF20220525",
     resave: false,
     saveUninitialized: false,
+    cookie: { secure: false }
   })
 );
 
 // 라우터 등록
-app.use("/api/members", memberRoutes);
+app.use("/api/users", userRoutes);
 app.use("/api/recipes", recipeRoutes);
 app.use("/api/diseases", diseaseRoutes);
 

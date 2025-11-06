@@ -91,7 +91,7 @@ export async function saveFavoriteRecipe(user, receipeName){
 
 
 // 즐겨찾기 목록 조회
-export async function findFavoriteReceipeByUser(userId) {
+export async function findFavoriteRecipeByUser(userId) {
     try {
         const db = getDB();
         const result = [];
@@ -111,7 +111,7 @@ export async function findFavoriteReceipeByUser(userId) {
 
         return result;
     } catch (err) {
-        console.error("[recipeRepository] findFavoriteReceipeByUser error : ", err);
+        console.error("[recipeRepository] findFavoriteRecipeByUser error : ", err);
 
         return [];
     }

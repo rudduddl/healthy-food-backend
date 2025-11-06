@@ -1,5 +1,5 @@
 import { Router } from "express";
-import {searchDisease} from "../services/diseaseService.js";
+import {getDisease, searchDisease} from "../services/diseaseService.js";
 import {getRecipe, searchRecipe, putFavoriteRecipe, getCautionRecipesByDisease} from "../services/recipeService.js"
 
 const router = Router();
@@ -7,7 +7,7 @@ const router = Router();
 // 질환 조회
 router.get("/", async (req, res) => {
   try {
-    const disease = await searchDisease(req.query.search);
+    const disease = await getDisease(req.params.data);
     res.status(200).json(disease);
   } catch (err) {
     console.error("Error in /api/diseases route : ", err);

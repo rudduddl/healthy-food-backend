@@ -4,7 +4,7 @@ import dotenv from "dotenv";
 dotenv.config();
 
 const dbName = "mydb";
-const uri = process.env.DB_URL;
+const uri = process.env.DB_URI;
 const client = new MongoClient(uri, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
