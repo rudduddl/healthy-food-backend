@@ -6,14 +6,12 @@ const router = Router();
 // 로그인
 router.post("/login", async (req, res) => {
   const id = req.body.id;
-  const password = req.body.password;
-  
+
   if (req.session.user === undefined) {
-    const user = await login(id, password);
+    const user = await login(id, req.body.password);
     if (user) {
       req.session.user = {
         id: id,
-        password: password,
         name: user.name,
         authorized: true,
       };
@@ -51,7 +49,7 @@ router.post("/signup", async (req, res) => {
   const result = await signup(signupObj);
   switch (result) {
     case "SUCCESS":
-      res.json({ result: "success" });
+      res.status(201).json({ result: "success" });
       break;
     case "ERR_DUPLICATE":
       res.status(400).json({ result: "duplicate id" });
@@ -65,7 +63,7 @@ router.post("/signup", async (req, res) => {
 // 로그인 여부 확인 및 사용자 정보 반환
 router.get("/user", (req, res) => {
   console.log("[DEBUG] /api/users/user 요청 도착");
-  // console.log("세션:", req.session);
+  console.log("세션:", req.session);
 
   // 세션이 없거나 로그인 정보가 없을 경우
   if (!req.session?.user) {

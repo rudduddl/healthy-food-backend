@@ -2,7 +2,7 @@ import {
     findById,
     findByRecipeNameContaining,
     findCautionRecipesByDiseaseId,
-    findFavoriteReceipeByUser,
+    findFavoriteRecipeByUser,
     saveFavoriteRecipe
 } from "../repositories/recipeRepository.js";
 
@@ -28,7 +28,7 @@ export async function putFavoriteRecipe(user, recipeName) {
 }
 
 export async function getFavoriteRecipe(userId){
-    const favoriteRecipes = await findFavoriteReceipeByUser(userId);
+    const favoriteRecipes = await findFavoriteRecipeByUser(userId);
 
     return favoriteRecipes || null;
 }
