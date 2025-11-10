@@ -10,9 +10,11 @@ router.post("/login", async (req, res) => {
   if (req.session.user === undefined) {
     const user = await login(id, req.body.password);
     if (user) {
+
+      console.log("user객체 : ", user);
       req.session.user = {
         id: id,
-        name: user.name,
+        name: user.userName,
         authorized: true,
       };
     } else {
