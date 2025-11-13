@@ -17,13 +17,19 @@ router.post("/login", async (req, res) => {
         name: user.userName,
         authorized: true,
       };
+
+      return res.json({
+        user : req.session.user
+      });
     } else {
-      res.write("<script>alert('login fail')</script>");
-      res.write('<script>window.location="/"</script>');
-      return;
+      return res.status(401).json({ message: "login fail" });
     }
   }
-  res.redirect("/api/diseases");
+
+  // 이미 로그인된 경우
+  return res.json({
+    user: req.session.user
+  });
 });
 
 // 로그아웃
