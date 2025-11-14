@@ -26,7 +26,7 @@ router.post("/login", async (req, res) => {
     }
   }
 
-  // 이미 로그인된 경우
+  // 이미 로그인된 경우(중복 로그인 방지 및 자동 로그인 처리)
   return res.json({
     user: req.session.user
   });
