@@ -8,6 +8,7 @@ import cors from 'cors';
 import userRoutes from './routes/user.js';
 import recipeRoutes from './routes/recipe.js';
 import diseaseRoutes from './routes/disease.js';
+import categoryRoutes from './routes/category.js';
 
 const app = express();
 
@@ -32,5 +33,6 @@ app.use(
 app.use("/api/users", userRoutes);
 app.use("/api/recipes", recipeRoutes);
 app.use("/api/diseases", diseaseRoutes);
+app.use("/api/categories", categoryRoutes);
 
 export default app;
