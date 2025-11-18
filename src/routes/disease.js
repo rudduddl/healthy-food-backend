@@ -1,5 +1,5 @@
 import { Router } from "express";
-import {getDisease, searchDisease} from "../services/diseaseService.js";
+import {getAllDiseases, getDisease, searchDisease} from "../services/diseaseService.js";
 import {getRecipe, searchRecipe, putFavoriteRecipe, getCautionRecipesByDisease} from "../services/recipeService.js"
 
 const router = Router();
@@ -7,8 +7,9 @@ const router = Router();
 // 질환 조회
 router.get("/", async (req, res) => {
   try {
-    const disease = await getDisease(req.params.data);
-    res.status(200).json(disease);
+    const diseases = await getAllDiseases(req.params.data);
+    // res.status(200).json(disease);
+    res.status(200).json({ success: true, data: diseases });
   } catch (err) {
     console.error("Error in /api/diseases route : ", err);
     res.status(500).json({ message : "서버 오류 발생"});
