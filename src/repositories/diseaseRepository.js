@@ -7,6 +7,31 @@ export async function findById(id){
     return await db.collection("disease").findOne({ _id: new ObjectId(id) });
 }
 
+export async function findCautionByDiseaseId(id) {
+    try {
+        const db = getDB();
+
+        const disease = await db
+            .collection("disease")
+            .findOne(
+                { _id: new ObjectId(id) },
+                { projection: { caution: 1, _id: 0 } } // caution 필드만 포함하고 _id는 제외
+            );
+
+        if (!disease) {
+            console.log(`[diseaseRepository] Disease not found for id: ${id}`);
+            return null; // 문서를 찾지 못했을 경우
+        }
+
+        // caution 필드 값만 반환
+        return disease.caution || null;
+
+    } catch (err) {
+        console.error("[diseaseRepository] findCautionByDiseaseId error:", err);
+        return null;
+    }
+}
+
 export async function findByDiseaseNameContaining(keyword) {
     try {
         const db = getDB();

@@ -1,9 +1,21 @@
-import { findById, findByDiseaseNameContaining, findAll } from "../repositories/diseaseRepository.js";
+import {
+    findById,
+    findByDiseaseNameContaining,
+    findAll,
+    findCautionByDiseaseId
+} from "../repositories/diseaseRepository.js";
 
 export async function getDisease(id){
     const disease = await findById(id);
 
     return disease || null;
+}
+
+export async function getCautionByDiseaseId(id) {
+    const caution = await findCautionByDiseaseId(id);
+
+    return caution || null;
+
 }
 
 export async function searchDisease(keyword) {

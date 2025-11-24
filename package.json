@@ -26,7 +26,6 @@
     "express-session": "^1.18.2",
     "module": "^2.0.0",
     "mongodb": "^6.20.0",
-    "mongoose": "^8.19.4",
     "request": "^2.88.2"
   }
 }

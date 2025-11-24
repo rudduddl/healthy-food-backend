@@ -38,8 +38,8 @@ export async function findByRecipeNameContaining(keyword){
 }
 
 /**
- * 특정 질환의 주의 레시피 목록 조회
- * (주의 성분이 포함된 레시피를 가져옴)
+ * 특정 질환의 주의 음식 제외 레시피 목록 조회
+ * (주의 성분이 포함되지 않은 레시피를 가져옴)
  */
 export async function findCautionRecipesByDiseaseId(diseaseId) {
     try {
@@ -49,19 +49,28 @@ export async function findCautionRecipesByDiseaseId(diseaseId) {
         const disease = await db.collection("disease").findOne({ _id: diseaseId });
 
         if (!disease || !disease.caution) {
+            console.log(`[recipeRepository] No caution foods found for diseaseId: ${diseaseId}`);
             return [];
         }
 
-        const cautionFoods = disease.caution.split(",").map(food => food.trim());
+        const cautionFoods = disease.caution.split(",").map(food => food.trim()).filter(food => food.length > 0);
+
+        // 주의 식품에 해당하는 정규 표현식 배열 생성
+        // 예시 : ["잡곡류밥", "시금치", "바나나"] => [/잡곡류밥/, /시금치/, /바나나/]
+        const regexCautionFoods = cautionFoods.map(food => new RegExp(food));
+
+        const query = {
+            RCP_PARTS_DTLS: {
+                $not: {
+                    $in: regexCautionFoods,
+                },
+            }
+        }
 
         // 주의 식품이 포함된 레시피 찾기
         const recipes = await db
             .collection("recipe")
-            .find({
-                RCP_PARTS_DTLS: {
-                    $in: cautionFoods.map(food => new RegExp(food, "i")),
-                },
-            })
+            .find(query)
             .project({ RCP_NM: 1, ATT_FILE_NO_MK: 1 })
             .toArray();
 
@@ -73,17 +82,17 @@ export async function findCautionRecipesByDiseaseId(diseaseId) {
 }
 
 // 즐겨찾기 추가
-export async function saveFavoriteRecipe(user, receipeName){
+export async function saveFavoriteRecipe(user, recipeName){
     try {
         const db = getDB();
         await db.collection("favoriteRecipe").insertOne({
             id : user,
-            recipeId : receipeName,
+            recipeId : recipeName,
         });
 
         return true;
     } catch (err) {
-        console.err("[recipeRepository] saveFavoriteReceipe error : ", err);
+        console.err("[recipeRepository] saveFavoriteRecipe error : ", err);
         
         return false;
     }

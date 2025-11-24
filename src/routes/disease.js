@@ -1,5 +1,5 @@
 import { Router } from "express";
-import {getAllDiseases, getDisease, searchDisease} from "../services/diseaseService.js";
+import {getAllDiseases, getCautionByDiseaseId, getDisease, searchDisease} from "../services/diseaseService.js";
 import {getRecipe, searchRecipe, putFavoriteRecipe, getCautionRecipesByDisease} from "../services/recipeService.js"
 
 const router = Router();
@@ -18,6 +18,18 @@ router.get("/", async (req, res) => {
 });
 
 // 특정 질환의 주의 음식 조회
+router.get("/:diseaseId/caution", async (req, res) => {
+  const { diseaseId } = req.params;
+
+  try {
+    const caution = await getCautionByDiseaseId(diseaseId);
+    res.status(200).json({ success: true, data: caution});
+  } catch (err) {
+    console.error("[disease.js] caution error:", err);
+    res.status(500).json({ success: false, message: "주의 음식 조회 실패" });
+  }
+
+});
 
 // 특정 질환의 주의 레시피 조회
 router.get("/:diseaseId/caution-recipes", async (req, res) => {

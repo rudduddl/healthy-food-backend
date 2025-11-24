@@ -7,7 +7,7 @@ const authKey = process.env.AUTH_KEY;
 const serviceId = process.env.SERVICE_ID;
 const dataType = "json";
 const startIdx = 1;
-const endIdx = 10;
+const endIdx = 100;
 
 /**
  * 식품안전나라 Open API를 통해 레시피를 검색합니다.
