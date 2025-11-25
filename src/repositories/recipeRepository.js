@@ -46,9 +46,9 @@ export async function findCautionRecipesByDiseaseId(diseaseId) {
         const db = getDB();
 
         // 질환별 주의 식품 목록을 disease 컬렉션에서 조회
-        const disease = await db.collection("disease").findOne({ _id: diseaseId });
+        const disease = await db.collection("disease").findOne({ _id: new ObjectId(diseaseId) });
 
-        if (!disease || !disease.caution) {
+        if (!disease) {
             console.log(`[recipeRepository] No caution foods found for diseaseId: ${diseaseId}`);
             return [];
         }
@@ -71,9 +71,13 @@ export async function findCautionRecipesByDiseaseId(diseaseId) {
         const recipes = await db
             .collection("recipe")
             .find(query)
-            .project({ RCP_NM: 1, ATT_FILE_NO_MK: 1 })
+            .project({
+                _id: 1,
+                recipeName: 1,
+                recipeThumnail: 1,
+            })
             .toArray();
-
+        console.log("[recipeRepository] recipes : ", recipes)
         return recipes;
     } catch (err) {
         console.error("[recipeRepository] findCautionRecipesByDiseaseId error:", err);

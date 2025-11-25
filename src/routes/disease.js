@@ -17,6 +17,20 @@ router.get("/", async (req, res) => {
 
 });
 
+// 특정 질환 조회
+router.get("/:diseaseId", async (req, res) => {
+  const { diseaseId } = req.params;
+
+  try {
+    const disease = await getDisease(diseaseId);
+    console.log("성공!!!")
+    res.status(200).json({success: true, data: disease});
+  } catch (err) {
+    console.error("[disease.js] disease id error:", err)
+    res.status(500).json({success:false, message: "특정 질병 조회 실패"});
+  }
+})
+
 // 특정 질환의 주의 음식 조회
 router.get("/:diseaseId/caution", async (req, res) => {
   const { diseaseId } = req.params;
@@ -37,21 +51,11 @@ router.get("/:diseaseId/caution-recipes", async (req, res) => {
 
   try {
     const recipes = await getCautionRecipesByDisease(diseaseId);
+    console.log("[disease.js] caution-recipes : ", recipes)
     res.status(200).json({ success: true, data: recipes });
   } catch (err) {
     console.error("[disease.js] caution-recipes error:", err);
     res.status(500).json({ success: false, message: "주의 레시피 조회 실패" });
-  }
-});
-
-// 질환별 상세 레시피 가져오기
-router.get("/:diseaseId/recipes/:recipeId", async (req, res) => {
-  const result = await getRecipe(req.params.id);
-  if (result === true) {
-    res.send({ result: "success"});
-
-  } else {
-    res.send({result: "상세 레시피 가져오기 실패"});
   }
 });
 

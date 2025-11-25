@@ -34,7 +34,6 @@ async function importRecipes() {
                         manualSteps: extractStructuredManual(r),
                     }));
 
-                    // 👈 **처음 넣는 것 처럼 insertMany만 실행합니다.**
                     await recipeCol.insertMany(recipesToInsert);
                     console.log(`총 ${recipes.length}건의 레시피 저장 완료`);
                 } else {
@@ -74,13 +73,7 @@ function extractStructuredManual(recipe) {
             break;
         }
 
-        // 텍스트 필드와 이미지 필드가 모두 존재하지 않거나 빈 문자열인 경우,
-        // 해당 단계가 끝났다고 판단하고 루프를 종료합니다.
-        // 다만, API 데이터는 마지막 필드까지 키가 존재하는 경향이 있으므로,
-        // 텍스트가 있을 경우에만 저장하도록 합니다.
         if (!manualTextRaw || manualTextRaw.trim() === "") {
-            // 텍스트가 없으면 해당 단계는 유효하지 않다고 보고 다음 단계로 넘어가지 않습니다.
-            // (만약 04가 비어있는데 05에 값이 있을 가능성이 있다면 continue를 써야 하지만, 공공데이터는 순차적임)
             break;
         }
 

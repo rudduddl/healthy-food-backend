@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { getFavoriteRecipe } from "../services/recipeService.js"
+import {getFavoriteRecipe, getRecipe} from "../services/recipeService.js"
 const router = Router();
 
 // router.get("/", (req, res) => {
@@ -22,7 +22,16 @@ const router = Router();
 //   });
 // });
 
+// 질환별 상세 레시피 가져오기
+router.get("/:recipeId", async (req, res) => {
+  const result = await getRecipe(req.params.id);
+  if (result === true) {
+    res.send({ result: "success"});
 
+  } else {
+    res.send({result: "상세 레시피 가져오기 실패"});
+  }
+});
 
 // 즐겨찾기 레시피 들고오기
 router.get("/api/recipes/favorite", async (req, res) => {
