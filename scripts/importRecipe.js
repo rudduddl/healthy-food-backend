@@ -28,7 +28,7 @@ async function importRecipes() {
                     // 레시피 문서에 diseaseId 없이 순수 레시피 정보만 저장
                     const recipesToInsert = recipes.map((r) => ({
                         recipeName: r.RCP_NM,
-                        recipeThumnail: r.ATT_FILE_NO_MK,
+                        recipeThumbnail: r.ATT_FILE_NO_MK,
                         ingredients: r.RCP_PARTS_DTLS,
                         // 구조화된 매뉴얼 단계 및 이미지 저장
                         manualSteps: extractStructuredManual(r),

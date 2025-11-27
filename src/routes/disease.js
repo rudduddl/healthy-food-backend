@@ -49,10 +49,15 @@ router.get("/:diseaseId/caution", async (req, res) => {
 router.get("/:diseaseId/caution-recipes", async (req, res) => {
   const { diseaseId } = req.params;
 
+  // req.query에서 startIndex와 keyword (search) 파라미터를 추출
+  // 프론트엔드에서 보낸 값은 문자열이므로 숫자로 변환
+  const startIndex = parseInt(req.query.startIndex) || 0;
+  const keyword = req.query.search || '';
+
   try {
-    const recipes = await getCautionRecipesByDisease(diseaseId);
-    console.log("[disease.js] caution-recipes : ", recipes)
-    res.status(200).json({ success: true, data: recipes });
+    const result = await getCautionRecipesByDisease(diseaseId, startIndex, keyword);
+    console.log("[disease.js] caution-recipes : ", result.recipes.length, "개, 전체:", result.totalCount);
+    res.status(200).json({ success: true, data: result });
   } catch (err) {
     console.error("[disease.js] caution-recipes error:", err);
     res.status(500).json({ success: false, message: "주의 레시피 조회 실패" });

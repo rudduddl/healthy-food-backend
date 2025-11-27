@@ -45,43 +45,77 @@ export async function findCautionRecipesByDiseaseId(diseaseId) {
     try {
         const db = getDB();
 
-        // 질환별 주의 식품 목록을 disease 컬렉션에서 조회
+        // 1. 질환별 주의 식품 목록을 disease 컬렉션에서 조회
         const disease = await db.collection("disease").findOne({ _id: new ObjectId(diseaseId) });
 
-        if (!disease) {
-            console.log(`[recipeRepository] No caution foods found for diseaseId: ${diseaseId}`);
-            return [];
+        // 주의 식품이 없으면 모든 레시피를 반환 (또는 빈 배열)
+        if (!disease || !disease.caution) {
+            console.log(`[recipeRepository] No caution foods defined for diseaseId: ${diseaseId}`);
         }
-
-        const cautionFoods = disease.caution.split(",").map(food => food.trim()).filter(food => food.length > 0);
 
         // 주의 식품에 해당하는 정규 표현식 배열 생성
         // 예시 : ["잡곡류밥", "시금치", "바나나"] => [/잡곡류밥/, /시금치/, /바나나/]
-        const regexCautionFoods = cautionFoods.map(food => new RegExp(food));
+        const cautionFoods = disease.caution.split(",").map(food => food.trim()).filter(food => food.length > 0);
 
-        const query = {
-            RCP_PARTS_DTLS: {
-                $not: {
-                    $in: regexCautionFoods,
-                },
-            }
+        // 주의 식품이 하나라도 포함된 문서를 찾는 $or 조건 배열 생성
+        const exclusionConditions = cautionFoods.map(food => ({
+            // 레시피 이름, 재료에서 주의 식품이 포함되어 있는지 검색
+            $or: [
+                { recipeName: { $regex: food } },
+                { ingredients: { $regex: food } },
+            ]
+        }));
+
+        let query = {};
+
+        // 주의 식품 키워드가 하나라도 있으면 조건 실행
+
+        if (exclusionConditions.length > 0) {
+            query = {
+                $nor: exclusionConditions,
+            };
         }
 
-        // 주의 식품이 포함된 레시피 찾기
+        if (keyword) {
+            const searchCondition = {
+                $or: [
+                    { recipeName: { $regex: keyword, $options: 'i' } },
+                    { ingredients: { $regex: keyword, $options: 'i' } }
+                ]
+            };
+
+            // 💡 수정: 기존 query(주의 식품 제외)와 검색 조건을 $and로 결합
+            query = {
+                $and: [
+                    query,
+                    searchCondition
+                ]
+            };
+        }
+
+        const totalCount = await db.collection("recipe").countDocuments(query);
+
+        // 주의 식품이 포함된 레시피 '제외'하고 조회
         const recipes = await db
             .collection("recipe")
             .find(query)
             .project({
                 _id: 1,
                 recipeName: 1,
-                recipeThumnail: 1,
+                recipeThumbnail: 1,
             })
+            .skip(startIndex) // 시작 위치만큼 건너뛰기
+            .limit(limit)     // 요청된 개수만큼만 가져오기
             .toArray();
-        console.log("[recipeRepository] recipes : ", recipes)
-        return recipes;
+
+        console.log("[recipeRepository] recipes count: ", recipes.length);
+        return {
+            recipes: recipes,
+            totalCount: totalCount
+        };
     } catch (err) {
         console.error("[recipeRepository] findCautionRecipesByDiseaseId error:", err);
-        return [];
+        return { recipes: [], totalCount: 0 };
     }
 }
 
