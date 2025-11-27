@@ -18,8 +18,8 @@ export async function searchRecipe(keyword){
     return recipes.length ? recipes : null;
 }
 
-export async function getCautionRecipesByDisease(diseaseId) {
-    const recipes = await findCautionRecipesByDiseaseId(diseaseId);
+export async function getCautionRecipesByDisease(diseaseId, startIndex, keyword) {
+    const recipes = await findCautionRecipesByDiseaseId(diseaseId, startIndex, keyword);
     return recipes;
 }
 

@@ -49,9 +49,10 @@ router.get("/:diseaseId/caution", async (req, res) => {
 router.get("/:diseaseId/caution-recipes", async (req, res) => {
   const { diseaseId } = req.params;
 
+  console.log("DEBUG: req.query 원본 값:", req.query);
   // req.query에서 startIndex와 keyword (search) 파라미터를 추출
   // 프론트엔드에서 보낸 값은 문자열이므로 숫자로 변환
-  const startIndex = parseInt(req.query.startIndex) || 0;
+  const startIndex = Number(req.query.startIndex) || 0;
   const keyword = req.query.search || '';
 
   try {
