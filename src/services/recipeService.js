@@ -2,14 +2,22 @@ import {
     findById,
     findByRecipeNameContaining,
     findCautionRecipesByDiseaseId,
-    findFavoriteRecipeByUser,
+    findFavoriteRecipeByUser, findRecommendedRecipes,
     saveFavoriteRecipe
 } from "../repositories/recipeRepository.js";
 
 export async function getRecipe(id){
     const recipe = await findById(id);
+    if(!recipe){
+        return null
+    }
 
-    return recipe || null;
+    const cautionRecipes = await findRecommendedRecipes(recipe.diseaseId, id)
+
+    return {
+        recipe: recipe,
+        cautionRecipes: cautionRecipes || [] // 목록이 없을 경우 빈 배열 반환
+    };
 }
 
 export async function searchRecipe(keyword){

@@ -173,3 +173,59 @@ export async function findFavoriteRecipeByUser(userId) {
         return [];
     }
 }
+
+// 해당 레시피 제외 나머지 레시피(주의 음식 제외) 중 5개씩 추천
+export async function findRecommendedRecipes(diseaseId, mainRecipeId) {
+    try {
+        const db = getDB();
+
+        const disease = await db.collection("disease").findOne({ _id: new ObjectId(diseaseId) });
+
+        const rawCaution = disease?.caution || "";
+        const cautionFoods = rawCaution.split(",").map(food => food.trim()).filter(food => food.length > 0);
+
+        const exclusionConditions = cautionFoods.map(food => ({
+            $or: [
+                { recipeName: { $regex: food } },
+                { ingredients: { $regex: food } },
+            ]
+        }));
+
+        let exclusionQuery = {};
+
+        if (exclusionConditions.length > 0) {
+            exclusionQuery = {
+                $nor: exclusionConditions,
+            };
+        }
+
+        const pipeline = [
+            { $match : {diseaseId : diseaseId } },
+            { $match: {"_id": { "$ne": new ObjectId(mainRecipeId) } } },
+        ]
+
+        // 모든 $match 조건을 하나의 객체로 결합
+        const combinedMatch = {
+            diseaseId: diseaseId,
+            "_id": { "$ne": new ObjectId(mainRecipeId) },
+            ...exclusionQuery // 주의 식품 제외 조건 합치기
+        };
+
+
+        // Aggregate Pipeline 최종 구성 및 실행
+        const finalPipeline = [
+            { $match: combinedMatch }, // 결합된 조건 사용
+            { $sample: { size: 5} }    // 무작위 5개 추출
+        ];
+
+        const recommended = await db
+            .collection("recipe")
+            .aggregate(finalPipeline)
+            .toArray()
+
+        return recommended
+    } catch (err) {
+        console.error("[recipeRepository] findRecommendedRecipes error : ", err)
+        return []
+    }
+}

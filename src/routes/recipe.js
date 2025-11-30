@@ -24,9 +24,11 @@ const router = Router();
 
 // 질환별 상세 레시피 가져오기
 router.get("/:recipeId", async (req, res) => {
-  const result = await getRecipe(req.params.id);
-  if (result === true) {
-    res.send({ result: "success"});
+  console.log("[recipe.js] req params recipeId: ", req.params.recipeId)
+  const result = await getRecipe(req.params.recipeId);
+  console.log("[recipe.js] result : ", result)
+  if (result) {
+    res.send({ result: "success", recipe: result.recipe, cautionRecipes : result.cautionRecipes});
 
   } else {
     res.send({result: "상세 레시피 가져오기 실패"});
@@ -36,7 +38,7 @@ router.get("/:recipeId", async (req, res) => {
 // 즐겨찾기 레시피 들고오기
 router.get("/api/recipes/favorite", async (req, res) => {
   const result = await getFavoriteRecipe(req.session.user.id);
-  if (result === true) {
+  if (result) {
     res.send({ result: "success"});
 
   } else {
