@@ -1,5 +1,5 @@
 import { Router } from "express";
-import {getFavoriteRecipe, getRecipe} from "../services/recipeService.js"
+import {getFavoriteRecipe, getRecipe, putFavoriteRecipe} from "../services/recipeService.js"
 const router = Router();
 
 // router.get("/", (req, res) => {
@@ -36,7 +36,7 @@ router.get("/:recipeId", async (req, res) => {
 });
 
 // 즐겨찾기 레시피 들고오기
-router.get("/api/recipes/favorite", async (req, res) => {
+router.get("/favorite", async (req, res) => {
   const result = await getFavoriteRecipe(req.session.user.id);
   if (result) {
     res.send({ result: "success"});
@@ -46,3 +46,23 @@ router.get("/api/recipes/favorite", async (req, res) => {
   }
 });
 export default router;
+
+// 즐겨찾기에 특정 레시피 추가
+router.post("/:recipeId/favorite", async (req, res) => {
+
+    const recipeId = req.params.recipeId; // URL 파라미터로부터 레시피 ID 호출
+
+    if (req.session.user === undefined) {
+      res.send({ result: "로그인 후 이용해주세요" });
+      return;
+    }
+    try{
+      await putFavoriteRecipe(req.session.user.id, recipeId);
+
+      res.send({ result: "success" });
+
+    } catch {
+      res.send({ result: "즐겨찾기 추가 실패" });
+    }
+
+})

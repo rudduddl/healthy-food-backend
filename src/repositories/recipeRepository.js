@@ -130,12 +130,12 @@ export async function findCautionRecipesByDiseaseId(
     }
 }
 // 즐겨찾기 추가
-export async function saveFavoriteRecipe(user, recipeName){
+export async function saveFavoriteRecipe(user, recipeId){
     try {
         const db = getDB();
         await db.collection("favoriteRecipe").insertOne({
             id : user,
-            recipeId : recipeName,
+            recipeId : recipeId,
         });
 
         return true;
