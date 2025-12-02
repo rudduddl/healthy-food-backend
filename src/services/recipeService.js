@@ -31,8 +31,8 @@ export async function getCautionRecipesByDisease(diseaseId, startIndex, keyword)
     return recipes;
 }
 
-export async function putFavoriteRecipe(user, recipeId) {
-    await saveFavoriteRecipe(user, recipeId);
+export async function putFavoriteRecipe(userId, recipeId) {
+    return await saveFavoriteRecipe(userId, recipeId);
 }
 
 export async function getFavoriteRecipe(userId){

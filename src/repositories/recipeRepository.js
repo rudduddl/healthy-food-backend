@@ -130,19 +130,38 @@ export async function findCautionRecipesByDiseaseId(
     }
 }
 // 즐겨찾기 추가
-export async function saveFavoriteRecipe(user, recipeId){
+export async function saveFavoriteRecipe(userId, recipeId) {
     try {
-        const db = getDB();
-        await db.collection("favoriteRecipe").insertOne({
-            id : user,
-            recipeId : recipeId,
+        const db = await getDB();
+        const collection = db.collection("favoriteRecipe");
+
+        // 1. 중복 확인 (이 레시피 ID와 사용자 ID 조합이 이미 존재하는지 확인)
+        const existingFavorite = await collection.findOne({
+            id: userId,
+            recipeId: recipeId,
         });
 
-        return true;
+        if (existingFavorite) {
+            // 💡 이미 존재함: 라우터에서 '0'을 받아 "이미 추가되어 있습니다" 메시지를 보냅니다.
+            console.log("[saveFavoriteRecipe] 중복 추가 시도:", userId, recipeId);
+            return 0;
+        }
+
+        // 2. 중복이 없으면 문서 삽입
+        await collection.insertOne({
+            id: userId,
+            recipeId: recipeId,
+            // createdAt: new Date(), // 필요하다면 시간 정보도 추가 가능
+        });
+
+        // 💡 성공: 라우터에서 '1'을 받아 "success" 메시지를 보냅니다.
+        console.log("[saveFavoriteRecipe] 즐겨찾기 추가 성공:", userId, recipeId);
+        return 1;
+
     } catch (err) {
-        console.err("[recipeRepository] saveFavoriteRecipe error : ", err);
-        
-        return false;
+        // 💡 DB 오류 발생 시
+        console.error("[recipeRepository] saveFavoriteRecipe error : ", err);
+        return -1; // 라우터에서 실패 처리 (else 블록)
     }
 }
 
@@ -154,13 +173,15 @@ export async function findFavoriteRecipeByUser(userId) {
         const result = [];
         const favoriteRecipeIds = await db
             .collection("favoriteRecipe")
-            .find({ id : userId })
+            .find({ _id : new ObjectId(userId) })
             .toArray();
+
+        console.log("favoriteRecipeIds : ", favoriteRecipeIds.toString())
         
         for (const favoriteRecipe of favoriteRecipeIds) {
             const recipe = await db.collection("recipe").findOne(
                 { _id : new ObjectId(favoriteRecipe.recipeId) },
-                { projection : { RCP_NM : 1, ATT_FILE_NO_MK : 1 } }
+                { projection : { recipeName : 1, recipeThumbnail : 1 } }
             );
         
             if (recipe) result.push(recipe);

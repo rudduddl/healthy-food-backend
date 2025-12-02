@@ -24,7 +24,6 @@ const router = Router();
 
 // 질환별 상세 레시피 가져오기
 router.get("/:recipeId", async (req, res) => {
-  console.log("[recipe.js] req params recipeId: ", req.params.recipeId)
   const result = await getRecipe(req.params.recipeId);
   console.log("[recipe.js] result : ", result)
   if (result) {
@@ -38,6 +37,7 @@ router.get("/:recipeId", async (req, res) => {
 // 즐겨찾기 레시피 들고오기
 router.get("/favorite", async (req, res) => {
   const result = await getFavoriteRecipe(req.session.user.id);
+  console.log("[recipe.js] 즐겨찾기 result : ", result)
   if (result) {
     res.send({ result: "success"});
 
@@ -56,13 +56,29 @@ router.post("/:recipeId/favorite", async (req, res) => {
       res.send({ result: "로그인 후 이용해주세요" });
       return;
     }
+
+    console.log("userId:", req.session.user.id)
     try{
-      await putFavoriteRecipe(req.session.user.id, recipeId);
+        const modifiedCount = await putFavoriteRecipe(req.session.user.id, recipeId);
+        console.log("🚨 Router Received modifiedCount:", modifiedCount, "Type:", typeof modifiedCount);
 
-      res.send({ result: "success" });
+        if (modifiedCount === 1) {
+            console.log("즐겨찾기 성공 응답 전송")
+            res.send({ result: "success" });
 
-    } catch {
-      res.send({ result: "즐겨찾기 추가 실패" });
+        } else if (modifiedCount === 0) {
+            console.log("즐겨찾기 중복 응답 전송")
+            res.send({ result: "이미 즐겨찾기에 추가되어 있습니다." });
+
+        } else {
+            // -1 등 알 수 없는 오류
+            console.log("즐겨찾기 그 외 오류 전송")
+            res.send({ result: "즐겨찾기 추가 실패" });
+        }
+
+    } catch (err){
+        console.error("recipe 라우터에서 잡힌 오류 : ", err)
+        res.send({ result: "즐겨찾기 추가 실패" });
     }
 
 })
